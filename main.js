@@ -8,30 +8,32 @@ const giphy = {
 };
 
 // Update trending giphys
-function update() {
+async function update() {
   // Toggle refresh state
   $('#update .icon').toggleClass('d-none');
 
-  fetch(new Request(`${giphy.url}?${$.param(giphy.query)}`))
-    .then(async (res) => {
-      $('#giphys').empty();
+  try {
+    let response = await fetch(new Request(`${giphy.url}?${$.param(giphy.query)}`))
 
-      const gifs = await res.clone().json().then(({ data }) => data)
+    const gifs = await response.clone().json().then(({ data }) => data)
 
-      gifs.forEach(gif => $('#giphys')
-        .prepend(`
-          <div class="col-sm-6 col-md-4 col-lg-3 p-1">
-            <img class="w-100 img-fluid" src="${
-              gif.images.downsized_large.url
-            }">
-          </div>`)
-      )
-    })
-    .catch(console.error)
-    .then(() => $('#update .icon').toggleClass('d-none'))
+    gifs.forEach(gif => $('#giphys')
+      .prepend(`
+        <div class="col-sm-6 col-md-4 col-lg-3 p-1">
+          <img class="w-100 img-fluid" src="${
+            gif.images.downsized_large.url
+          }"></div>`)
+    )
+  } catch (e) {
+    console.error(e)
+  } finally {
 
-  // Prevent submission if originates from click
-  return false;
+    $('#update .icon').toggleClass('d-none')
+
+    // Prevent submission if originates from click
+    return false;
+  }
+
 }
 
 // Register click event
