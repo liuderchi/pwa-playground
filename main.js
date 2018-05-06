@@ -1,10 +1,10 @@
 
 // Progressive Enhancement
 if (navigator.serviceWorker) {
-    
+
     // Register SW
     navigator.serviceWorker.register('sw.js').catch(console.error);
-    
+
     // Giphy cache clean
     function giphyCacheClean(giphys) {
 
@@ -26,6 +26,12 @@ var giphy = {
     }
 };
 
+const CORS_ANYWHERE_DOMAIN = 'https://cors-anywhere.herokuapp.com'
+
+var darkSkyAPI = {
+  url: 'https://api.darksky.net/forecast/501c815982d69b200afd4b1671befbd8/37.8267,-122.4233'
+}
+
 // Update trending giphys
 function update() {
 
@@ -33,7 +39,8 @@ function update() {
    $('#update .icon').toggleClass('d-none');
 
     // Call Giphy API
-    $.get( giphy.url, giphy.query)
+    // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
+    $.get(`${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}`)
 
         // Success
         .done( function (res) {
@@ -44,17 +51,19 @@ function update() {
             // Populate array of latest Giphys
             var latestGiphys = [];
 
+            console.warn({ temp: res.currently.temperature, daily: res.daily.data});
+
             // Loop Giphys
-            $.each( res.data, function (i, giphy) {
+            $.each( res.daily.data, (i, data) => {
 
                 // Add to latest Giphys
-                latestGiphys.push( giphy.images.downsized_large.url );
+                // latestGiphys.push( giphy.images.downsized_large.url );
 
                 // Add Giphy HTML
                 $('#giphys').prepend(
-                    '<div class="col-sm-6 col-md-4 col-lg-3 p-1">' +
-                        '<img class="w-100 img-fluid" src="' + giphy.images.downsized_large.url + '">' +
-                    '</div>'
+                  `<div class="col-sm-6 col-md-4 col-lg-3 p-1">
+                    ${data.temperatureHigh}, ${data.temperatureLow}
+                  </div>`
                 );
             });
 
@@ -64,7 +73,7 @@ function update() {
 
         // Failure
         .fail(function(){
-            
+
             $('.alert').slideDown();
             setTimeout( function() { $('.alert').slideUp() }, 2000);
         })

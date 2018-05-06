@@ -73,7 +73,7 @@ const fallbackCache = (req) => {
         // Return Clone of Network Response
         return networkRes.clone();
     })
-    
+
     // Try cache
     .catch( err => caches.match(req) );
 };
@@ -103,11 +103,11 @@ self.addEventListener('fetch', e => {
     // App shell
     if( e.request.url.match(location.origin) ) {
         e.respondWith( staticCache(e.request) );
-    
+
     // Giphy API
-    } else if ( e.request.url.match('api.giphy.com/v1/gifs/trending') ) {
+    } else if ( e.request.url.match('api.darksky.net') ) {
         e.respondWith( fallbackCache(e.request) );
-    
+
     // Giphy Media
     } else if ( e.request.url.match('giphy.com/media') ) {
         e.respondWith( staticCache(e.request, 'giphy') );
