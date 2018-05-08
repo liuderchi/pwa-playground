@@ -38,18 +38,22 @@
 
         <link rel="stylesheet" href="vendor/bootstrap.min.css">
         <script defer src="vendor/jquery.min.js"></script>
+        <script defer src="vendor/Chart.min.js"></script>
         <script defer src="main.js"></script>
 
         <style>
             .spinner {
                 animation-name: spin;
                 animation-duration: 2000ms;
-                animation-iteration-count: infinite; 
+                animation-iteration-count: infinite;
                 animation-timing-function: linear;
             }
             @keyframes spin {
                 from { transform:rotate(0deg); }
                 to {transform:rotate(360deg); }
+            }
+            .charts {
+              max-height: 300px;
             }
         </style>
 
@@ -79,6 +83,12 @@
 
             <!-- Giphys -->
             <div id="giphys" class="row no-gutters"></div>
+
+            <div class="charts">
+              <canvas id="temperature" width="200" height="200"></canvas>
+              <canvas id="humidity" width="200" height="200"></canvas>
+              <canvas id="pressure" width="200" height="200"></canvas>
+            </div>
 
             <noscript>
                 <div class="text-center mt-5">

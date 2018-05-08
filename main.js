@@ -57,9 +57,23 @@ function update() {
         console.warn(res.daily.data.map(({ humidity }) => humidity));
         console.warn(res.daily.data.map(({ pressure }) => pressure));
 
-        // TODO append temp graph
-        // TODO append humidity graph
-        // TODO append pressure graph
+        drawChart({
+          id: 'temperature',
+          data: res.daily.data.map(({ apparentTemperatureMax }) =>
+            f2c(apparentTemperatureMax)
+          ),
+          label: 'Temperature',
+        })
+        drawChart({
+          id: 'humidity',
+          data: res.daily.data.map(({ humidity }) => humidity),
+          label: 'Humidity',
+        })
+        drawChart({
+          id: 'pressure',
+          data: res.daily.data.map(({ pressure }) => pressure),
+          label: 'Pressure',
+        })
 
         // Inform the SW (if available) of current Giphys
         if (navigator.serviceWorker) giphyCacheClean(latestGiphys);
@@ -89,3 +103,25 @@ $('#update a').click(update);
 
 // Update trending giphys on load
 update();
+
+function drawChart({ id, data, label }) {
+  var ctx = document.getElementById(id).getContext('2d');
+  // var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [
+        {
+          // label: 'Humidity',
+          label,
+          // data: [12, 19, 3, 5, 2, 3],
+          data,
+          backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+          borderColor: ['rgba(255,99,132,1)'],
+          borderWidth: 1
+        }
+      ]
+    },
+  });
+}
