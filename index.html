@@ -37,14 +37,17 @@
         <meta name="msapplication-square310x310logo" content="images/icons/mstile-310x310.png">
 
         <link rel="stylesheet" href="vendor/bootstrap.min.css">
+        <link rel="stylesheet" href="vendor/chartist.min.css">
+
         <script defer src="vendor/jquery.min.js"></script>
+        <script defer src="vendor/chartist.min.js"></script>
         <script defer src="main.js"></script>
 
         <style>
             .spinner {
                 animation-name: spin;
                 animation-duration: 2000ms;
-                animation-iteration-count: infinite; 
+                animation-iteration-count: infinite;
                 animation-timing-function: linear;
             }
             @keyframes spin {
@@ -79,6 +82,10 @@
 
             <!-- Giphys -->
             <div id="giphys" class="row no-gutters"></div>
+
+            <div class="temperture ct-perfect-fourth"></div>
+            <div class="pressure ct-perfect-fourth"></div>
+            <div class="humidity ct-perfect-fourth"></div>
 
             <noscript>
                 <div class="text-center mt-5">

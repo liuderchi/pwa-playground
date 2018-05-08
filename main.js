@@ -28,7 +28,11 @@ const darkSkyAPI = {
 };
 
 function f2c(f) {
-  return Math.ceil((f - 32) * 5 / 9 * 100) / 100;
+  return round2((f - 32) * 5 / 9);
+}
+
+function round2(x) {
+  return Math.ceil(x * 100) / 100;
 }
 
 // Update trending giphys
@@ -55,11 +59,20 @@ function update() {
           )
         );
         console.warn(res.daily.data.map(({ humidity }) => humidity));
-        console.warn(res.daily.data.map(({ pressure }) => pressure));
+        console.warn(res.daily.data.map(({ pressure }) => round2(pressure)));
 
-        // TODO append temp graph
-        // TODO append humidity graph
-        // TODO append pressure graph
+        new Chartist.Line('.temperture', {
+          series: [ res.daily.data.map(({ apparentTemperatureMax }) =>
+            f2c(apparentTemperatureMax)
+          ) ]
+        });
+        new Chartist.Line('.pressure', {
+          series: [ res.daily.data.map(({ pressure }) => f2c(pressure)) ]
+        });
+        new Chartist.Line('.humidity', {
+          series: [ res.daily.data.map(({ humidity }) => humidity) ]
+        });
+
 
         // Inform the SW (if available) of current Giphys
         if (navigator.serviceWorker) giphyCacheClean(latestGiphys);
