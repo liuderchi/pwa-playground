@@ -24,11 +24,37 @@ const geoipAPI = {
 const CORS_ANYWHERE_DOMAIN = 'https://cors-anywhere.herokuapp.com';
 
 const darkSkyAPI = {
-  url: 'https://api.darksky.net/forecast/501c815982d69b200afd4b1671befbd8'
+  url: 'https://api.darksky.net/forecast',
+  key: '501c815982d69b200afd4b1671befbd8'
 };
 
 function f2c(f) {
   return Math.ceil((f - 32) * 5 / 9 * 100) / 100;
+}
+
+function drawChart({ id, data, label }) {
+  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    today = new Date().getDay(),
+    backgroundColor = ['rgba(243, 154, 30, 0.2)'],
+    borderColor = ['rgba(243, 154, 30, 1)'],
+    borderWidth = 1;
+
+  const ctx = document.getElementById(id).getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [...weekDays.slice(today), ...weekDays.slice(0, today)],
+      datasets: [
+        {
+          label,
+          data,
+          backgroundColor,
+          borderColor,
+          borderWidth
+        }
+      ]
+    }
+  });
 }
 
 // Update trending giphys
@@ -41,55 +67,56 @@ function update() {
 
     // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
     $.get(
-      `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${res.latitude},${
+      `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${darkSkyAPI.key}/${res.latitude},${
         res.longitude
       }`
     )
-      .done(function(res) {
+      .done(function(weatherData) {
         $('#giphys').empty();
-        var latestGiphys = [];
+        var latestWeatherData = [];
 
-        console.warn(
-          res.daily.data.map(({ apparentTemperatureMax }) =>
-            f2c(apparentTemperatureMax)
-          )
-        );
-        console.warn(res.daily.data.map(({ humidity }) => humidity));
-        console.warn(res.daily.data.map(({ pressure }) => pressure));
+        console.warn({ weatherData });
+
+        $('#giphys').after(`
+          <h3>${res.region_name}, ${(new Date()).toDateString().split(' ').slice(1,3).join(' ')}</h3>
+          <h4>
+            <span class="large">${f2c(weatherData.currently.apparentTemperature)}</span> &deg;C
+            &emsp;<span class="large">${weatherData.currently.precipProbability * 100}</span> %
+          </h4>
+        `)
 
         drawChart({
           id: 'temperature',
-          data: res.daily.data.map(({ apparentTemperatureMax }) =>
+          data: weatherData.daily.data.map(({ apparentTemperatureMax }) =>
             f2c(apparentTemperatureMax)
           ),
-          label: 'Temperature',
-        })
+          label: 'Temperature (Celsius)'
+        });
+        drawChart({
+          id: 'precipProbability',
+          data: weatherData.daily.data.map(
+            ({ precipProbability }) => precipProbability
+          ),
+          label: 'Precipitation Probability'
+        });
         drawChart({
           id: 'humidity',
-          data: res.daily.data.map(({ humidity }) => humidity),
-          label: 'Humidity',
-        })
-        drawChart({
-          id: 'pressure',
-          data: res.daily.data.map(({ pressure }) => pressure),
-          label: 'Pressure',
-        })
+          data: weatherData.daily.data.map(({ humidity }) => humidity),
+          label: 'Humidity'
+        });
+
+        latestWeatherData.push(weatherData)
 
         // Inform the SW (if available) of current Giphys
-        if (navigator.serviceWorker) giphyCacheClean(latestGiphys);
+        if (navigator.serviceWorker) giphyCacheClean(latestWeatherData);
       })
-
-      // Failure
       .fail(function() {
         $('.alert').slideDown();
         setTimeout(function() {
           $('.alert').slideUp();
         }, 2000);
       })
-
-      // Complete
       .always(function() {
-        // Re-Toggle refresh state
         $('#update .icon').toggleClass('d-none');
       });
   });
@@ -98,30 +125,5 @@ function update() {
   return false;
 }
 
-// Manual refresh
 $('#update a').click(update);
-
-// Update trending giphys on load
 update();
-
-function drawChart({ id, data, label }) {
-  var ctx = document.getElementById(id).getContext('2d');
-  // var ctx = document.getElementById('myChart').getContext('2d');
-  var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      datasets: [
-        {
-          // label: 'Humidity',
-          label,
-          // data: [12, 19, 3, 5, 2, 3],
-          data,
-          backgroundColor: ['rgba(255, 99, 132, 0.2)'],
-          borderColor: ['rgba(255,99,132,1)'],
-          borderWidth: 1
-        }
-      ]
-    },
-  });
-}

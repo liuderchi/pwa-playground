@@ -52,8 +52,19 @@
                 from { transform:rotate(0deg); }
                 to {transform:rotate(360deg); }
             }
+            h3, h4 {
+              color: grey;
+            }
+            h4 {
+              text-align: center;
+              margin: 30px auto;
+            }
+            h4 .large {
+              font-size: 4rem;
+            }
             .charts {
-              max-height: 300px;
+              margin: auto;
+              width: 80vw;
             }
         </style>
 
@@ -85,9 +96,9 @@
             <div id="giphys" class="row no-gutters"></div>
 
             <div class="charts">
-              <canvas id="temperature" width="200" height="200"></canvas>
-              <canvas id="humidity" width="200" height="200"></canvas>
-              <canvas id="pressure" width="200" height="200"></canvas>
+              <canvas id="temperature" height="200"></canvas>
+              <canvas id="precipProbability" height="200"></canvas>
+              <canvas id="humidity" height="200"></canvas>
             </div>
 
             <noscript>
