@@ -105,7 +105,11 @@ self.addEventListener('fetch', e => {
         e.respondWith( staticCache(e.request) );
 
     // Giphy API
+    // } else if ( e.request.url.match('api.giphy.com/v1/gifs/trending') ) {
     } else if ( e.request.url.match('api.darksky.net') ) {
+        e.respondWith( fallbackCache(e.request) );
+
+    } else if ( e.request.url.match('api.ipstack.com') ) {
         e.respondWith( fallbackCache(e.request) );
 
     // Giphy Media
