@@ -62,7 +62,7 @@ function update() {
   // Toggle refresh state
   $('#update .icon').toggleClass('d-none');
 
-  $.get(geoipAPI.url, geoipAPI.query).done(res => {
+  $.get(`${CORS_ANYWHERE_DOMAIN}/${geoipAPI.url}`, geoipAPI.query).done(res => {
     console.warn(`fetching weather data in ${res.region_name}...`);
 
     // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
