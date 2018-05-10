@@ -3,7 +3,7 @@
 
     <head>
 
-        <title>Giphygram</title>
+        <title>Sunnygram</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=0, user-scalable=0">
 
@@ -52,6 +52,9 @@
                 from { transform:rotate(0deg); }
                 to {transform:rotate(360deg); }
             }
+            #title {
+              display: block;
+            }
             h3, h4 {
               color: grey;
             }
@@ -75,7 +78,7 @@
         <!-- Nav Header -->
         <header class="navbar sticky-top navbar-expand bg-primary navbar-dark">
             <!-- Logo -->
-            <img src="images/logo.png" alt="Giphygram" width="60" class="img-fluid navbar-brand">
+            <img src="images/logo.png" alt="Sunnygram" width="60" class="img-fluid navbar-brand">
 
             <div id="update" class="ml-auto">
                 <a class="icon" href="#update"><img width="25" src="images/flame.png"></a>
@@ -89,11 +92,10 @@
 
             <!-- Error Alert -->
             <div class="alert alert-danger text-center m-1" style="display:none;">
-                Could not update Giphy's
+                Could not update Weather
             </div>
 
-            <!-- Giphys -->
-            <div id="giphys" class="row no-gutters"></div>
+            <div id="title" class="row no-gutters"></div>
 
             <div class="charts">
               <canvas id="temperature" height="200"></canvas>
@@ -103,7 +105,7 @@
 
             <noscript>
                 <div class="text-center mt-5">
-                    Giphygram requires JavaScript to function.<br>
+                    Sunnygram requires JavaScript to function.<br>
                     <small>Please enable JavaScript in your browser settings.</small>
                 </div>
             </noscript>

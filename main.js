@@ -72,12 +72,12 @@ function update() {
       }`
     )
       .done(function(weatherData) {
-        $('#giphys').empty();
+        $('#title').empty();
         var latestWeatherData = [];
 
         console.warn({ weatherData });
 
-        $('#giphys').after(`
+        $('#title').append(`
           <h3>${res.region_name}, ${(new Date()).toDateString().split(' ').slice(1,3).join(' ')}</h3>
           <h4>
             <span class="large">${f2c(weatherData.currently.apparentTemperature)}</span> &deg;C
