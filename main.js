@@ -29,7 +29,7 @@ const darkSkyAPI = {
 };
 
 function f2c(f) {
-  return Math.ceil((f - 32) * 5 / 9 * 100) / 100;
+  return Math.ceil((f - 32) * 5 / 9 * 10) / 10;
 }
 
 function drawChart({ id, data, label }) {
@@ -91,6 +91,7 @@ function update() {
             f2c(apparentTemperatureMax)
           ),
           label: 'Temperature (Celsius)'
+          // NOTE do not draw label
         });
         drawChart({
           id: 'precipProbability',
@@ -99,6 +100,7 @@ function update() {
           ),
           label: 'Precipitation Probability'
         });
+        // TODO draw UV chart
         drawChart({
           id: 'humidity',
           data: weatherData.daily.data.map(({ humidity }) => humidity),
