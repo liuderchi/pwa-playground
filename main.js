@@ -100,11 +100,10 @@ function update() {
           ),
           label: 'Precipitation Probability'
         });
-        // TODO draw UV chart
         drawChart({
-          id: 'humidity',
-          data: weatherData.daily.data.map(({ humidity }) => humidity),
-          label: 'Humidity'
+          id: 'uvIndex',
+          data: weatherData.daily.data.map(({ uvIndex }) => uvIndex),
+          label: 'UV Index'
         });
 
         latestWeatherData.push(weatherData)
