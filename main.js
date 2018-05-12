@@ -73,6 +73,7 @@ function update() {
     )
       .done(function(weatherData) {
         $('#title').empty();
+        $('#info').empty();
         var latestWeatherData = [];
 
         console.warn({ weatherData });
