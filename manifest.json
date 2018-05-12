@@ -1,6 +1,6 @@
 {
-  "name": "Giphygram",
-  "short_name": "Giphygram",
+  "name": "Sunnygram",
+  "short_name": "Sunnygram",
   "theme_color": "#0082f9",
   "background_color": "#ffffff",
   "display": "standalone",
@@ -48,5 +48,6 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "splash_pages": null
 }
