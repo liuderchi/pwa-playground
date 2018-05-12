@@ -109,15 +109,15 @@ function update() {
         // Inform the SW (if available) of current Giphys
         if (navigator.serviceWorker) giphyCacheClean(latestWeatherData);
       })
-      .fail(function() {
-        $('.alert').slideDown();
-        setTimeout(function() {
-          $('.alert').slideUp();
-        }, 2000);
-      })
-      .always(function() {
-        $('#update .icon').toggleClass('d-none');
-      });
+  })
+  .fail(function() {
+    $('.alert').slideDown();
+    setTimeout(function() {
+      $('.alert').slideUp();
+    }, 2000);
+  })
+  .always(function() {
+    $('#update .icon').toggleClass('d-none');
   });
 
   // Prevent submission if originates from click
