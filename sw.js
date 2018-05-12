@@ -78,25 +78,6 @@ const fallbackCache = (req) => {
     .catch( err => caches.match(req) );
 };
 
-
-// Clean old Giphys from the 'giphy' cache
-const cleanGiphyCache = (giphys) => {
-
-    caches.open('giphy').then( cache => {
-
-        // Get all cache entries
-        cache.keys().then( keys => {
-
-            // Loop entries (requests)
-            keys.forEach( key => {
-
-                // If entry is NOT part of current Giphys, Delete
-                if( !giphys.includes(key.url) ) cache.delete(key);
-            });
-        });
-    });
-};
-
 // SW Fetch
 self.addEventListener('fetch', e => {
 
@@ -104,23 +85,10 @@ self.addEventListener('fetch', e => {
     if( e.request.url.match(location.origin) ) {
         e.respondWith( staticCache(e.request) );
 
-    // Giphy API
-    // } else if ( e.request.url.match('api.giphy.com/v1/gifs/trending') ) {
     } else if ( e.request.url.match('api.darksky.net') ) {
         e.respondWith( fallbackCache(e.request) );
 
     } else if ( e.request.url.match('api.ipstack.com') ) {
         e.respondWith( fallbackCache(e.request) );
-
-    // Giphy Media
-    } else if ( e.request.url.match('giphy.com/media') ) {
-        e.respondWith( staticCache(e.request, 'giphy') );
     }
-});
-
-// Listen for message from client
-self.addEventListener('message', e => {
-
-    // Identify the message
-    if( e.data.action === 'cleanGiphyCache' ) cleanGiphyCache(e.data.giphys);
 });
