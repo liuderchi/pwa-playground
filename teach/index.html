@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="vendor/bootstrap.min.css">
         <script defer src="vendor/jquery.min.js"></script>
         <script defer src="vendor/Chart.min.js"></script>
+        <script defer src="main.js"></script>
 
         <style>
             .spinner {
@@ -63,6 +64,15 @@
             <!-- Error Alert -->
             <div class="alert alert-danger text-center m-1" style="display:none;">
                 Could not update Weather
+            </div>
+
+            <h3 id="title"></h3>
+            <h4 id="info"></h4>
+
+            <div class="charts">
+              <canvas id="temperature" height="200"></canvas>
+              <canvas id="precipProbability" height="200"></canvas>
+              <canvas id="uvIndex" height="200"></canvas>
             </div>
 
         </main>
