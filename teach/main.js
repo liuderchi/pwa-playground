@@ -1,3 +1,9 @@
+// Progressive Enhancement
+if (navigator.serviceWorker) {
+  // Register SW
+  navigator.serviceWorker.register('sw.js').catch(console.error);
+}
+
 const geoipAPI = {
   url: 'http://api.ipstack.com/124.11.64.18',
   query: {
