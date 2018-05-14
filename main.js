@@ -71,15 +71,16 @@ function update() {
   // Toggle refresh state
   $('#update .icon').toggleClass('d-none');
 
-  $.get(`${CORS_ANYWHERE_DOMAIN}/${geoipAPI.url}`, geoipAPI.query)
-    .done(res => {
+  // $.get(`${CORS_ANYWHERE_DOMAIN}/${geoipAPI.url}`, geoipAPI.query)
+  //   .done(res => {
+  navigator.geolocation.getCurrentPosition(res => {
       console.warn(`fetching weather data in ${res.region_name}...`);
 
       // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
       $.get(
         `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${darkSkyAPI.key}/${
-          res.latitude
-        },${res.longitude}`,
+          res.coords.latitude
+        },${res.coords.longitude}`,
       ).done(function(weatherData) {
         $('#title').empty();
         $('#info').empty();
@@ -88,7 +89,7 @@ function update() {
         console.warn({ weatherData });
 
         $('#title').append(
-          `${res.region_name}, ${new Date()
+          `${new Date()
             .toDateString()
             .split(' ')
             .slice(1, 3)
