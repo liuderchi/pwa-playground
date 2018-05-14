@@ -18,6 +18,14 @@ const darkSkyAPI = {
   key: '501c815982d69b200afd4b1671befbd8',
 };
 
+const openWeatherMapAPI = {
+  url: 'http://samples.openweathermap.org/data/2.5/forecast',
+  query: {
+    q: 'Taipei',
+    appid: 'c50accef3c5022b54a605268032345fd',
+  },
+}
+
 function f2c(f) {
   return Math.ceil((f - 32) * 5 / 9 * 10) / 10;
 }
@@ -75,6 +83,8 @@ function update() {
     .done(res => {
       console.warn(`fetching weather data in ${res.region_name}...`);
 
+      $.get(`${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}`, openWeatherMapAPI.query)
+        .done(console.warn);
       // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
       $.get(
         `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${darkSkyAPI.key}/${
