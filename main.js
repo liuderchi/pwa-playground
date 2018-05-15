@@ -18,6 +18,14 @@ const darkSkyAPI = {
   key: '501c815982d69b200afd4b1671befbd8',
 };
 
+const googleMapsAPI = {
+  url: 'https://maps.googleapis.com/maps/api/geocode/json',
+  query: {
+    latlng: '',
+    key: 'AIzaSyBaciEJSfJtMvXOlOkID-EEZL0hX8QUKEg',
+  },
+}
+
 function f2c(f) {
   return Math.ceil((f - 32) * 5 / 9 * 10) / 10;
 }
@@ -74,7 +82,7 @@ function update() {
   // $.get(`${CORS_ANYWHERE_DOMAIN}/${geoipAPI.url}`, geoipAPI.query)
   //   .done(res => {
   navigator.geolocation.getCurrentPosition(res => {
-      console.warn(`fetching weather data in ${res.region_name}...`);
+      console.warn(`fetching weather data in ${res.coords.latitude}, ${res.coords.longitude}...`);
 
       // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
       $.get(
@@ -88,13 +96,18 @@ function update() {
 
         console.warn({ weatherData });
 
-        $('#title').append(
-          `${new Date()
-            .toDateString()
-            .split(' ')
-            .slice(1, 3)
-            .join(' ')}`,
-        );
+        googleMapsAPI.query.latlng = `${res.coords.latitude},${res.coords.longitude}`
+        $.get(googleMapsAPI.url, googleMapsAPI.query)
+          .done(res => {
+            const matchedAddressComps = res.results[0].address_components
+              .filter(comp =>
+                comp.types.findIndex(type => type === 'administrative_area_level_1') > -1
+              )
+            const city = matchedAddressComps[0].long_name;
+            console.warn(`geo reverse encoding res: ${city}`);
+            $('#title')
+              .append(`${city}, ${new Date().toDateString().split(' ').slice(1, 3).join(' ')}`);
+          });
         $('h4#info').append(`
           <span class="large">${f2c(
             weatherData.currently.apparentTemperature,
