@@ -14,7 +14,7 @@ const darkSkyAPI = {
 const openWeatherMapAPI = {
   url: 'http://api.openweathermap.org/data/2.5/weather',
   query: {
-    q: 'Taipei',
+    q: '',
     appid: 'c50accef3c5022b54a605268032345fd',
   },
 };
@@ -72,6 +72,17 @@ function update() {
   // Toggle refresh state
   $('#update .icon').toggleClass('d-none');
 
+  openWeatherMapAPI.query.q = $('#city').val() || 'Taipei';
+  $('#city').val(openWeatherMapAPI.query.q);
+  $('#date').empty();
+  $('#date').append(
+    `, ${new Date()
+      .toDateString()
+      .split(' ')
+      .slice(1, 3)
+      .join(' ')}`,
+  );
+
   $.get(
     `${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}`,
     openWeatherMapAPI.query,
@@ -85,19 +96,11 @@ function update() {
           res.coord.lat
         },${res.coord.lon}`,
       ).done(function(weatherData) {
-        $('#title').empty();
-        $('#info').empty();
         var latestWeatherData = [];
 
         console.warn({ weatherData });
 
-        $('#title').append(
-          `${openWeatherMapAPI.query.q}, ${new Date()
-            .toDateString()
-            .split(' ')
-            .slice(1, 3)
-            .join(' ')}`,
-        );
+        $('#info').empty();
         $('h4#info').append(`
           <span class="large">${f2c(
             weatherData.currently.apparentTemperature,
@@ -119,7 +122,7 @@ function update() {
         drawChart({
           id: 'precipProbability',
           data: weatherData.daily.data.map(
-            ({ precipProbability }) => precipProbability,
+            ({ precipProbability }) => Math.ceil(precipProbability),
           ),
           title: 'Precipitation Probability',
           borderColor: 'rgb(23, 162, 184, 1)',

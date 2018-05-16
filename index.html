@@ -45,8 +45,21 @@
                 from { transform:rotate(0deg); }
                 to {transform:rotate(360deg); }
             }
-            h3, h4 {
+            input {
+              color: grey;
+              outline: none;
+              border: none;
+              font-weight: 500;
+              width: 50%;
+              text-align: right;
+            }
+            h3 {
+              display: flex;
+            }
+            h4 {
               display: block;
+            }
+            h3, h4 {
               color: grey;
               text-align: center;
               margin: 30px auto;
@@ -88,7 +101,10 @@
                 Could not update Weather
             </div>
 
-            <h3 id="title"></h3>
+            <h3>
+              <input type="text" id="city" name="city" value="">
+              <span id="date"></span>
+            </h3>
             <h4 id="info"></h4>
 
             <div class="charts">
