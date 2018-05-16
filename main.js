@@ -19,7 +19,7 @@ const darkSkyAPI = {
 };
 
 const openWeatherMapAPI = {
-  url: 'http://samples.openweathermap.org/data/2.5/forecast',
+  url: 'http://api.openweathermap.org/data/2.5',
   query: {
     q: 'Taipei',
     appid: 'c50accef3c5022b54a605268032345fd',
@@ -30,37 +30,43 @@ function f2c(f) {
   return Math.ceil((f - 32) * 5 / 9 * 10) / 10;
 }
 
+function k2c(k) {
+  return Math.ceil((k - 273) * 10) / 10;
+}
+
 function drawChart({
   id,
   data,
+  labels,
   borderColor = 'rgba(243, 154, 30, 1)',
   backgroundColor = 'rgba(243, 154, 30, 0.2)',
   title,
   yTick = v => v,
 }) {
   Chart.defaults.global.defaultFontSize = 14;
-  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    today = new Date().getDay(),
-    options = {
-      title: {
-        display: true,
-        text: title,
-        fontSize: 14,
-        fontStyle: 'default',
-      },
-      legend: {
-        display: false,
-      },
-      scales: {
-        yAxes: [{ ticks: { callback: yTick } }],
-      },
-    };
+  // const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  //   today = new Date().getDay(),
+  const options = {
+    title: {
+      display: true,
+      text: title,
+      fontSize: 14,
+      fontStyle: 'default',
+    },
+    legend: {
+      display: false,
+    },
+    scales: {
+      yAxes: [{ ticks: { callback: yTick } }],
+    },
+  };
 
   const ctx = document.getElementById(id).getContext('2d');
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: [...weekDays.slice(today), ...weekDays.slice(0, today)],
+      // labels: [...weekDays.slice(today), ...weekDays.slice(0, today)],
+      labels,
       datasets: [
         {
           data,
@@ -83,13 +89,14 @@ function update() {
     .done(res => {
       console.warn(`fetching weather data in ${res.region_name}...`);
 
-      $.get(`${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}`, openWeatherMapAPI.query)
-        .done(console.warn);
+      // $.get(`${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}/forecast`, openWeatherMapAPI.query)
+      //   .done(console.warn);
       // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
-      $.get(
-        `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${darkSkyAPI.key}/${
-          res.latitude
-        },${res.longitude}`,
+      // $.get(
+      //   `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${darkSkyAPI.key}/${
+      //     res.latitude
+      //   },${res.longitude}`,
+      $.get(`${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}/forecast`, openWeatherMapAPI.query
       ).done(function(weatherData) {
         $('#title').empty();
         $('#info').empty();
@@ -98,24 +105,30 @@ function update() {
         console.warn({ weatherData });
 
         $('#title').append(
-          `${res.region_name}, ${new Date()
+          `${openWeatherMapAPI.query.q}, ${new Date()
             .toDateString()
             .split(' ')
             .slice(1, 3)
             .join(' ')}`,
         );
-        $('h4#info').append(`
-          <span class="large">${f2c(
-            weatherData.currently.apparentTemperature,
-          )}</span> &deg;C
-          &emsp;<span class="large">${weatherData.currently.precipProbability *
-            100}</span> %
-        `);
+        $.get(`${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}/weather`, openWeatherMapAPI.query)
+          .done(res => {
+            console.error({ res });
+            $('h4#info').append(`
+              <span class="large">${k2c(
+                res.main.temp
+              )}</span> &deg;C
+              &emsp;<span class="large">${res.main.humidity}</span> %`
+            );
+          })
 
         drawChart({
           id: 'temperature',
-          data: weatherData.daily.data.map(({ apparentTemperatureMax }) =>
-            f2c(apparentTemperatureMax),
+          data: weatherData.list.map(({ main: { temp } }) =>
+            k2c(temp),
+          ),
+          labels: weatherData.list.map(({ dt }) =>
+            (new Date(dt*1000)).toString().slice(0,3)
           ),
           title: 'Temperature',
           borderColor: 'rgb(40, 167, 69, 1)',
@@ -139,6 +152,7 @@ function update() {
           borderColor: 'rgb(102, 16, 242, 1)',
           backgroundColor: 'rgb(102, 16, 242, 0.2)',
         });
+        // NOTE WIP
 
         latestWeatherData.push(weatherData);
       });
