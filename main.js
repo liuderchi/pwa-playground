@@ -121,8 +121,8 @@ function update() {
         });
         drawChart({
           id: 'precipProbability',
-          data: weatherData.daily.data.map(
-            ({ precipProbability }) => Math.ceil(precipProbability),
+          data: weatherData.daily.data.map(({ precipProbability }) =>
+            Math.ceil(precipProbability),
           ),
           title: 'Precipitation Probability',
           borderColor: 'rgb(23, 162, 184, 1)',
