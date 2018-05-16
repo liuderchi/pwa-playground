@@ -79,7 +79,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(staticCache(e.request));
   } else if (e.request.url.match('api.darksky.net')) {
     e.respondWith(fallbackCache(e.request));
-  } else if (e.request.url.match('api.ipstack.com')) {
+  } else if (e.request.url.match('api.openweathermap.org')) {
     e.respondWith(fallbackCache(e.request));
   }
 });

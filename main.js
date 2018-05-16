@@ -4,18 +4,19 @@ if (navigator.serviceWorker) {
   navigator.serviceWorker.register('sw.js').catch(console.error);
 }
 
-const geoipAPI = {
-  url: 'http://api.ipstack.com/124.11.64.18',
-  query: {
-    access_key: 'e22e57b562e511b646985a6d79af1344',
-  },
-};
-
 const CORS_ANYWHERE_DOMAIN = 'https://cors-anywhere.herokuapp.com';
 
 const darkSkyAPI = {
   url: 'https://api.darksky.net/forecast',
   key: '501c815982d69b200afd4b1671befbd8',
+};
+
+const openWeatherMapAPI = {
+  url: 'http://api.openweathermap.org/data/2.5/weather',
+  query: {
+    q: 'Taipei',
+    appid: 'c50accef3c5022b54a605268032345fd',
+  },
 };
 
 function f2c(f) {
@@ -71,15 +72,18 @@ function update() {
   // Toggle refresh state
   $('#update .icon').toggleClass('d-none');
 
-  $.get(`${CORS_ANYWHERE_DOMAIN}/${geoipAPI.url}`, geoipAPI.query)
+  $.get(
+    `${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}`,
+    openWeatherMapAPI.query,
+  )
     .done(res => {
-      console.warn(`fetching weather data in ${res.region_name}...`);
+      console.warn(`fetching weather data in ${res.name}...`);
 
       // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
       $.get(
         `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${darkSkyAPI.key}/${
-          res.latitude
-        },${res.longitude}`,
+          res.coord.lat
+        },${res.coord.lon}`,
       ).done(function(weatherData) {
         $('#title').empty();
         $('#info').empty();
@@ -88,7 +92,7 @@ function update() {
         console.warn({ weatherData });
 
         $('#title').append(
-          `${res.region_name}, ${new Date()
+          `${openWeatherMapAPI.query.q}, ${new Date()
             .toDateString()
             .split(' ')
             .slice(1, 3)
