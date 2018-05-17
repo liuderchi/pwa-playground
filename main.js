@@ -73,7 +73,9 @@ function update() {
   $('#update .icon').toggleClass('d-none');
 
   openWeatherMapAPI.query.q = $('#city').val() || 'Taipei';
-  $('#city').val(openWeatherMapAPI.query.q);
+  if (!$('#city').val()) {
+    $('#city').val(openWeatherMapAPI.query.q);
+  }
   $('#date').empty();
   $('#date').append(
     `, ${new Date()
