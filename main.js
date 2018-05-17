@@ -68,7 +68,7 @@ function drawChart({
 }
 
 // Update trending giphys
-function update() {
+async function update() {
   // Toggle refresh state
   $('#update .icon').toggleClass('d-none');
 
@@ -84,71 +84,70 @@ function update() {
       .join(' ')}`,
   );
 
-  $.get(
-    `${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}`,
-    openWeatherMapAPI.query,
-  )
-    .done(res => {
-      console.warn(`fetching weather data in ${res.name}...`);
+  try {
+    const res = await fetch(
+      `${CORS_ANYWHERE_DOMAIN}/${openWeatherMapAPI.url}?` +
+        `q=${openWeatherMapAPI.query.q}&` +
+        `appid=${openWeatherMapAPI.query.appid}`,
+    ).then(data => data.json());
 
-      // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
-      $.get(
-        `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/${darkSkyAPI.key}/${
-          res.coord.lat
-        },${res.coord.lon}`,
-      ).done(function(weatherData) {
-        var latestWeatherData = [];
+    console.warn(`fetching weather data in ${res.name}...`);
 
-        console.warn({ weatherData });
+    // NOTE add Allow all origins in reponse by hitting cors-anywhere proxy
+    const weatherData = await fetch(
+      `${CORS_ANYWHERE_DOMAIN}/${darkSkyAPI.url}/` +
+        `${darkSkyAPI.key}/${res.coord.lat},${res.coord.lon}`,
+    ).then(data => data.json());
 
-        $('h4#info').html(`
-          <span class="large">${f2c(
-            weatherData.currently.apparentTemperature,
-          )}</span> &deg;C
-          &emsp;<span class="large">${weatherData.currently.precipProbability *
-            100}</span> %
-        `);
+    var latestWeatherData = [];
 
-        drawChart({
-          id: 'temperature',
-          data: weatherData.daily.data.map(({ apparentTemperatureMax }) =>
-            f2c(apparentTemperatureMax),
-          ),
-          title: 'Temperature',
-          borderColor: 'rgb(40, 167, 69, 1)',
-          backgroundColor: 'rgb(40, 167, 69, 0.2)',
-          yTick: v => `${v} \u00B0C`,
-        });
-        drawChart({
-          id: 'precipProbability',
-          data: weatherData.daily.data.map(({ precipProbability }) =>
-            Math.ceil(precipProbability),
-          ),
-          title: 'Precipitation Probability',
-          borderColor: 'rgb(23, 162, 184, 1)',
-          backgroundColor: 'rgb(23, 162, 184, 0.2)',
-          yTick: v => `${v * 100} %`,
-        });
-        drawChart({
-          id: 'uvIndex',
-          data: weatherData.daily.data.map(({ uvIndex }) => uvIndex),
-          title: 'UV Index',
-          borderColor: 'rgb(102, 16, 242, 1)',
-          backgroundColor: 'rgb(102, 16, 242, 0.2)',
-        });
+    console.warn({ weatherData });
 
-        latestWeatherData.push(weatherData);
-      });
-    })
-    .fail(function() {
-      $('.alert').slideDown();
-      setTimeout(function() {
-        $('.alert').slideUp();
-      }, 2000);
-    })
-    .always(function() {
-      $('#update .icon').toggleClass('d-none');
+    $('h4#info').html(`
+      <span class="large">${f2c(
+        weatherData.currently.apparentTemperature,
+      )}</span> &deg;C
+      &emsp;<span class="large">${weatherData.currently.precipProbability *
+        100}</span> %
+    `);
+
+    drawChart({
+      id: 'temperature',
+      data: weatherData.daily.data.map(({ apparentTemperatureMax }) =>
+        f2c(apparentTemperatureMax),
+      ),
+      title: 'Temperature',
+      borderColor: 'rgb(40, 167, 69, 1)',
+      backgroundColor: 'rgb(40, 167, 69, 0.2)',
+      yTick: v => `${v} \u00B0C`,
     });
+    drawChart({
+      id: 'precipProbability',
+      data: weatherData.daily.data.map(({ precipProbability }) =>
+        Math.ceil(precipProbability),
+      ),
+      title: 'Precipitation Probability',
+      borderColor: 'rgb(23, 162, 184, 1)',
+      backgroundColor: 'rgb(23, 162, 184, 0.2)',
+      yTick: v => `${v * 100} %`,
+    });
+    drawChart({
+      id: 'uvIndex',
+      data: weatherData.daily.data.map(({ uvIndex }) => uvIndex),
+      title: 'UV Index',
+      borderColor: 'rgb(102, 16, 242, 1)',
+      backgroundColor: 'rgb(102, 16, 242, 0.2)',
+    });
+
+    latestWeatherData.push(weatherData);
+  } catch (e) {
+    $('.alert').slideDown();
+    setTimeout(function() {
+      $('.alert').slideUp();
+    }, 2000);
+  } finally {
+    $('#update .icon').toggleClass('d-none');
+  }
 
   // Prevent submission if originates from click
   return false;
