@@ -76,8 +76,7 @@ function update() {
   if (!$('#city').val()) {
     $('#city').val(openWeatherMapAPI.query.q);
   }
-  $('#date').empty();
-  $('#date').append(
+  $('#date').text(
     `, ${new Date()
       .toDateString()
       .split(' ')
@@ -102,8 +101,7 @@ function update() {
 
         console.warn({ weatherData });
 
-        $('#info').empty();
-        $('h4#info').append(`
+        $('h4#info').html(`
           <span class="large">${f2c(
             weatherData.currently.apparentTemperature,
           )}</span> &deg;C
