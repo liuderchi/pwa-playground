@@ -1,5 +1,5 @@
 // SW Version
-const version = '1.1';
+const version = '5.0';
 
 // Static Cache - App Shell
 const appAssets = [
@@ -14,6 +14,8 @@ const appAssets = [
 
 // SW Install
 self.addEventListener('install', e => {
+  // NOTE do self.skipWaiting(); can auto force update
+  self.skipWaiting();
   e.waitUntil(
     caches.open(`static-${version}`).then(cache => cache.addAll(appAssets)),
   );
