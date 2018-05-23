@@ -155,3 +155,19 @@ async function update() {
 
 $('#update a').click(update);
 update();
+
+$('#notify').click(() => {
+  if (window.Notification) {
+    const showNotification = () => new Notification('You have got mail');
+
+    if (Notification.permission === 'granted') {
+      setTimeout(showNotification, 5000);
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission(permission => {
+        if (permission === 'granted') {
+          setTimeout(showNotification, 5000);
+        }
+      });
+    }
+  }
+})

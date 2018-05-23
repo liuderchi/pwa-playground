@@ -1,9 +1,10 @@
 // SW Version
-const version = '1.1';
+const version = '3.0';
 
 // Static Cache - App Shell
 const appAssets = [
   'index.html',
+  // TODO never static cache root resource
   'main.js',
   'images/flame.png',
   'images/logo.png',
@@ -78,6 +79,7 @@ self.addEventListener('fetch', e => {
   if (e.request.url.match(location.origin)) {
     e.respondWith(staticCache(e.request));
   } else if (e.request.url.match('api.darksky.net')) {
+    // TODO apply fallbackCache to index.html
     e.respondWith(fallbackCache(e.request));
   } else if (e.request.url.match('api.openweathermap.org')) {
     e.respondWith(fallbackCache(e.request));
