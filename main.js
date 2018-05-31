@@ -99,8 +99,6 @@ async function update() {
         `${darkSkyAPI.key}/${res.coord.lat},${res.coord.lon}`,
     ).then(data => data.json());
 
-    var latestWeatherData = [];
-
     console.warn({ weatherData });
 
     $('h4#info').html(`
@@ -139,7 +137,6 @@ async function update() {
       backgroundColor: 'rgb(102, 16, 242, 0.2)',
     });
 
-    latestWeatherData.push(weatherData);
   } catch (e) {
     $('.alert').slideDown();
     setTimeout(function() {
@@ -149,8 +146,6 @@ async function update() {
     $('#update .icon').toggleClass('d-none');
   }
 
-  // Prevent submission if originates from click
-  return false;
 }
 
 $('#update a').click(update);
