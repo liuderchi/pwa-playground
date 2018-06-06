@@ -1,5 +1,5 @@
 // SW Version
-const version = '5.0';
+const version = '1.0';
 
 // Static Cache - App Shell
 const appAssets = [
@@ -9,6 +9,7 @@ const appAssets = [
   'images/sync.png',
   'vendor/bootstrap.min.css',
   'vendor/jquery.min.js',
+  'vendor/Chart.min.js',
 ];
 
 // SW Install

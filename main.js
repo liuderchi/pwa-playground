@@ -1,4 +1,3 @@
-// Progressive Enhancement
 if (navigator.serviceWorker) {
   // Register SW
   navigator.serviceWorker.register('sw.js').catch(console.error);
@@ -67,7 +66,7 @@ function drawChart({
   });
 }
 
-// Update trending giphys
+// Update weather info
 async function update() {
   // Toggle refresh state
   $('#update .icon').toggleClass('d-none');
